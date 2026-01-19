@@ -26,6 +26,23 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.env/
+
+# Output files
+output/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
