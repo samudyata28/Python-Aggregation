@@ -15,14 +15,14 @@ It is designed with a strong focus on data correctness and integrity:
 
 Key Assumptions
 
-- Final Granularity
+- Final Granularity  
 The storage data defines the final business grain. Each output row represents one physical inventory record at
 (MaterialReference, Plant, StorageLocation, StorageBin), and uniqueness at this grain is strictly enforced.
 
-- Supplier Handling
+- Supplier Handling  
 If a material has multiple suppliers, the one with the lowest SupplierID is chosen only to keep the output deterministic, and to ensure reproducible output, not to represent business preference.
 
-- Missing Supplier Information
+- Missing Supplier Information  
 Materials without an associated supplier are retained in the output with SupplierName left as NULL, as missing supplier data is valid and no rule was provided to exclude or infer it.
 
 
