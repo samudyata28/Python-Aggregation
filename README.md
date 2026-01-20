@@ -3,23 +3,34 @@
 # Overview
 **TASK: Aggregated Material Data**  
 
-This project implements a robust Excel-based data aggregation pipeline that consolidates multiple master and reference datasets into a single, analytics-ready output.
+This project implements a robust data aggregation pipeline that consolidates multiple master and reference datasets into a single, analytics-ready output.
 The pipeline ingests material, plant, storage, supplier, and manufacturer data from separate Excel files, infers relationships using shared business keys, and produces a unified result table.
 
 It is designed with a strong focus on data correctness and integrity:
-- Enforces schema and key consistency
+- The pipeline follows a modular simple structure, making it easy to adapt, extend.
+- Preserve a clear and safe business granularity
 - Detects and fails on duplicate records
 - Logs meaningful diagnostics for fast issue resolution
 - The result is a deterministic, production-grade dataset that reflects a clear business grain and can be safely consumed by downstream reporting, analytics, or operational systems.
 
 Key Assumptions
 
-- MaterialReference uniquely identifies a material.
-- ManufacturerID and SupplierID are 1-to-1 with their respective name tables.
-- All joins are left joins to preserve the data unless business rule is specified.
-- Duplicate records at the final stage are detected and logged for error.
+- Final Granularity
+The storage data defines the final business grain. Each output row represents one physical inventory record at
+(MaterialReference, Plant, StorageLocation, StorageBin), and uniqueness at this grain is strictly enforced.
 
-Instructions to run the program
+- Supplier Handling
+If a material has multiple suppliers, the one with the lowest SupplierID is chosen only to keep the output deterministic, and to ensure reproducible output, not to represent business preference.
+
+- Missing Supplier Information
+Materials without an associated supplier are retained in the output with SupplierName left as NULL, as missing supplier data is valid and no rule was provided to exclude or infer it.
+
+
+# Requirements
+- Python 3.9 or higher
+---
+
+## How to Run the Pipeline
 
 Clone Repository
 ```bash
@@ -27,9 +38,15 @@ Clone Repository
 git clone <repository-url>
 cd <repository-folder>
 ```
-Requirements
-- python version 3.11 or higher
-  
+
+Create a virtual environment (recommended)
+
+```bash
+python -m venv venv
+source venv/bin/activate   # Linux / Mac
+venv\Scripts\activate      # Windows
+ ```
+ 
 Install the dependencies
 ```bash
 pip install -r requirements.txt
@@ -41,7 +58,7 @@ python main.py
 Structure:
 
 ```
-python-aggregation/
+material-data-aggregation/
 │
 ├── data/
 │   ├── materials.xlsx
@@ -49,11 +66,13 @@ python-aggregation/
 │   ├── storage.xlsx
 │   ├── suppliers.xlsx
 │   ├── supplier-names.xlsx
-│   ├── manufacturer-names.xlsx
-│   └── result-template.xlsx
+│   └── manufacturer-names.xlsx
 │
 ├── output/
-│   └── result.xlsx
+│   └── result.xlsx         
+│
+├── logs/
+│   └── aggregation_*.log   
 │
 ├── main.py
 ├── requirements.txt
